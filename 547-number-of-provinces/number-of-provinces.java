@@ -1,39 +1,44 @@
 class Solution {
+    public int findCircleNum(int[][] isConnected) {
+        int n = isConnected.length;
+        int[] union = new int[n];
+        int count = 0;
+        for(int i=0; i<n;i++){
+            union[i] = i;
+        }
 
-    public void dfs(int node, int[][] isConnected, boolean[] visited){
+        for(int i=0; i<n;i++) {
+            for(int j=0; j<n;j++) {
+                if (i==j) continue;
+                if (isConnected[i][j] == 1) {
+                    int u = find(union, i);
+                    int v = find(union, j);
+                    if(u != v){
+                        union(union, u, v);
+                    }
+                }
 
-        // Mark current city as visited
-        visited[node] = true;
-
-        // Visit all neighbouring cities
-        for(int i = 0; i < isConnected.length; i++){
-
-            if(!visited[i] && isConnected[node][i] == 1){
-                dfs(i, isConnected, visited);
             }
         }
+        for(int i=0; i<n;i++){
+            if (union[i] == i) count++;
+        }
+        return count;
     }
 
-    public int findCircleNum(int[][] isConnected) {
-
-        int n = isConnected.length;
-
-        boolean[] visited = new boolean[n];
-
-        int provinces = 0;
-
-        // Traverse every city
-        for(int i = 0; i < n; i++){
-
-            // New province found
-            if(!visited[i]){
-
-                dfs(i, isConnected, visited);
-
-                provinces++;
-            }
+    private int find(int[] parent, int i){
+        if(parent[i] != i){
+            parent[i] = find(parent, parent[i]);
         }
+        return parent[i];
+    }
 
-        return provinces;
+    private void union(int[] parent, int u, int v){
+        if(u < v){
+            parent[u] = v;
+        }
+        else{
+            parent[v] =u;
+        }
     }
 }
